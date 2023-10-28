@@ -187,6 +187,7 @@ def main():
             print(contact)
     else:
         print("No saved address book found. Starting with an empty address book.")
+    
     while True:
         user_input = input("Enter a command: ")
         command, *args = parse_input(user_input)
