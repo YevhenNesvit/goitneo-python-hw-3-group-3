@@ -1,4 +1,4 @@
-import oop
+from oop import AddressBook, Record
 
 def parse_input(user_input):
     cmd, *args = user_input.split()
@@ -12,12 +12,14 @@ def input_error(func):
                 return "Enter user name"
             elif func.__name__ == 'add_contact' and args[0][0] in args[1] :
                     return f"Contact {args[0][0]} already exist. To update contact enter 'change name phone'!"
-            elif func.__name__ == 'change_contact' and args[0][0] not in args[1] :
+            elif func.__name__ in ('change_contact', 'show_birthday') and args[0][0] not in args[1] :
                 return f"Contact {args[0][0]} does not exist. To add contact enter 'add name phone'!"
             elif not args[0] :
                 return "There are no contacts yet!"
             elif func.__name__ == 'add_birthday' and len(args[0]) != 2 :
                 return "Give me name and birthday please."
+            elif func.__name__ == 'show_birthday' and not args[1][args[0][0]].birthday :
+                return "Contact has no birthday yet. To add birthday enter 'add-birthday name birthday'!"
             else:
                 return func(*args, **kwargs)
         except ValueError:
@@ -31,7 +33,7 @@ def input_error(func):
 @input_error
 def add_contact(args, book):
     name, phone = args
-    contact = oop.Record(name)
+    contact = Record(name)
     no_error = contact.add_phone(phone)
 
     if no_error:  
@@ -42,10 +44,10 @@ def add_contact(args, book):
     
 @input_error   
 def change_contact(args, book):
-    name, phone = args
+    name, old_phone, new_phone = args
     contact = book.find(name)
     if contact:
-        contact.add_phone(phone)
+        contact.edit_phone(old_phone, new_phone)
 
     return "Contact updated."
 
@@ -74,8 +76,15 @@ def add_birthday(args, book) :
     
     return "Birthday is not added"
 
+@input_error
+def show_birthday(args, book) :
+    name = args[0]
+    contact = book.find(name)
+    if contact and contact.birthday:
+        return contact.birthday
+
 def main():
-    book = oop.AddressBook()
+    book = AddressBook()
     print("Welcome to the assistant bot!")
     while True:
         user_input = input("Enter a command: ")
@@ -96,6 +105,8 @@ def main():
             print(show_all(book))
         elif command == "add-birthday":
             print(add_birthday(args, book))
+        elif command == "show-birthday":
+            print(show_birthday(args, book))
         else:
             print("Invalid command.")
 
