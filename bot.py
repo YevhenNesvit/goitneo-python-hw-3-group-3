@@ -1,11 +1,29 @@
 from oop import AddressBook, Record
 
 def parse_input(user_input):
+    """
+    Parse user input and extract the command and arguments.
+
+    Args:
+        user_input (str): User's input string.
+
+    Returns:
+        Tuple: A tuple containing the command and arguments.
+    """
     cmd, *args = user_input.split()
     cmd = cmd.strip().lower()
     return cmd, *args
 
 def input_error(func):
+    """
+    Decorator function to handle input validation and errors for command functions.
+
+    Args:
+        func (function): The command function to be decorated.
+
+    Returns:
+        function: The decorated function with error handling.
+    """
     def wrapper(*args, **kwargs):
         try:
             if func.__name__ == 'show_phone' and len(args[0]) != 1 :
@@ -34,6 +52,16 @@ def input_error(func):
 
 @input_error
 def add_contact(args, book):
+    """
+    Add a new contact to the address book.
+
+    Args:
+        args (list): A list of arguments containing the name and phone number.
+        book (AddressBook): The address book instance to add the contact to.
+
+    Returns:
+        str: A message indicating the result of the operation.
+    """
     name, phone = args
     contact = Record(name)
     no_error = contact.add_phone(phone)
@@ -46,6 +74,16 @@ def add_contact(args, book):
     
 @input_error   
 def change_contact(args, book):
+    """
+    Change the phone number for an existing contact in the address book.
+
+    Args:
+        args (list): A list of arguments containing the name, old phone, and new phone.
+        book (AddressBook): The address book instance to modify the contact.
+
+    Returns:
+        str: A message indicating the result of the operation.
+    """
     name, old_phone, new_phone = args
     contact = book.find(name)
     if contact:
@@ -55,6 +93,16 @@ def change_contact(args, book):
 
 @input_error
 def show_phone(args, book) :
+    """
+    Display the phone number for an existing contact in the address book.
+
+    Args:
+        args (list): A list of arguments containing the name of the contact.
+        book (AddressBook): The address book instance to retrieve the phone number from.
+
+    Returns:
+        str: The phone number of the contact or an error message.
+    """
     name = args[0]
     contact = book.find(name)
     if contact:
@@ -62,12 +110,31 @@ def show_phone(args, book) :
 
 @input_error    
 def show_all(book) :
+    """
+    Display all contacts in the address book.
+
+    Args:
+        book (AddressBook): The address book instance to retrieve contacts from.
+
+    Returns:
+        str: A string containing all contacts or an error message if no contacts exist.
+    """
     all_contacts = [str(contact) for contact in book.data.values()]
     if all_contacts:
         return "\n".join(all_contacts)
     
 @input_error    
 def add_birthday(args, book) :
+    """
+    Add a birthday to an existing contact in the address book.
+
+    Args:
+        args (list): A list of arguments containing the name and birthday.
+        book (AddressBook): The address book instance to modify the contact.
+
+    Returns:
+        str: A message indicating the result of the operation.
+    """
     name, birthday = args
     contact = book.find(name)
     no_error = contact.add_birthday(birthday)
@@ -80,22 +147,52 @@ def add_birthday(args, book) :
 
 @input_error
 def show_birthday(args, book) :
+    """
+    Display the birthday for an existing contact in the address book.
+
+    Args:
+        args (list): A list of arguments containing the name of the contact.
+        book (AddressBook): The address book instance to retrieve the birthday from.
+
+    Returns:
+        str: The birthday of the contact or an error message.
+    """
     name = args[0]
     contact = book.find(name)
     if contact and contact.birthday:
         return contact.birthday
-    
+
+@input_error    
 def birthdays(book) :
+    """
+    Get upcoming birthdays for the week and format them.
+
+    Args:
+        book (AddressBook): The address book instance to retrieve contact birthdays.
+
+    Returns:
+        str: A string containing upcoming birthdays formatted by weekday.
+    """
     return book.get_birthdays_per_week()
 
 def main():
-    book = AddressBook()
+    """
+    Main function to run the assistant bot program.
+    """
+    book = AddressBook.load_from_file('my_address_book.dat')
     print("Welcome to the assistant bot!")
+    if book:
+        print("Loaded contacts:")
+        for contact in book.data.values():
+            print(contact)
+    else:
+        print("No saved address book found. Starting with an empty address book.")
     while True:
         user_input = input("Enter a command: ")
         command, *args = parse_input(user_input)
 
         if command in ["close", "exit"]:
+            book.save_to_file('my_address_book.dat')
             print("Good bye!")
             break
         elif command == "hello":
