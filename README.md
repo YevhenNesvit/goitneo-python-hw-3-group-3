@@ -18,16 +18,18 @@ To get started with Python Address Book, follow these steps:
 
    ```shell
    git clone https://github.com/YevhenNesvit/goitneo-python-hw-3-group-3.git
+   ```
 
 2. Navigate to the project directory:
    
    ```
    cd goitneo-python-hw-3-group-3
-
+   ```
 3. Run the application:
 
    ```
    python bot.py
+   ```
 
 ## Features
 - Add Contact: You can add a new contact with a name and phone number.
