@@ -16,6 +16,8 @@ def input_error(func):
                 return f"Contact {args[0][0]} does not exist. To add contact enter 'add name phone'!"
             elif not args[0] :
                 return "There are no contacts yet!"
+            elif func.__name__ == 'add_birthday' and len(args[0]) != 2 :
+                return "Give me name and birthday please."
             else:
                 return func(*args, **kwargs)
         except ValueError:
@@ -30,10 +32,13 @@ def input_error(func):
 def add_contact(args, book):
     name, phone = args
     contact = oop.Record(name)
-    contact.add_phone(phone)
-    book.add_record(contact)
+    no_error = contact.add_phone(phone)
 
-    return "Contact added."
+    if no_error:  
+        book.add_record(contact)
+        return "Contact added."
+    
+    return "Contact is not added"
     
 @input_error   
 def change_contact(args, book):
@@ -61,9 +66,13 @@ def show_all(book) :
 def add_birthday(args, book) :
     name, birthday = args
     contact = book.find(name)
-    if contact:
+    no_error = contact.add_birthday(birthday)
+    
+    if contact and no_error:
         contact.add_birthday(birthday)
         return "Birthday added."
+    
+    return "Birthday is not added"
 
 def main():
     book = oop.AddressBook()
