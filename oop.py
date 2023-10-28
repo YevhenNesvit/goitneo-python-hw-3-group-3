@@ -68,12 +68,6 @@ class Record:
             if p.value == phone:
                 return p
         return None
-    
-    def find_birthday(self, birthday):
-        for b in self.birthday:
-            if b.value == birthday:
-                return b
-        return None
 
     def __str__(self):
         return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, birthday: {self.birthday}"
@@ -92,14 +86,17 @@ class AddressBook(UserDict):
         if name in self.data:
             del self.data[name]
 
-    def get_birthdays_per_week(users) :
+    def get_birthdays_per_week(book) :
         birthdays_per_week = defaultdict(list)
         today = datetime.today().date()
-        users.sort(key=lambda x: x['birthday'])
-
+        users = sorted(book.data.values(), key=lambda x: x.birthday.value)
+        
         for user in users :
-            name = user["name"]
-            birthday = user["birthday"].date()
+            name = user.name.value
+            birthday = user.birthday.value if user.birthday else None
+            if birthday:
+                birthday = datetime.strptime(birthday, '%d.%m.%Y').date()
+        
             birthday_this_year = birthday.replace(year=today.year)
             if birthday_this_year < today :
                 birthday_this_year = birthday.replace(year=today.year + 1)
@@ -114,4 +111,12 @@ class AddressBook(UserDict):
                 else :
                     birthdays_per_week[birthday_this_year.strftime('%A')].append(name)
         
-        return birthdays_per_week
+        this_week = ""
+        for k, v in sorted(birthdays_per_week.items()):
+            if v:
+                if len(v) > 1:
+                    this_week += f"{k} : {', '.join(v)}\n"
+                else:
+                    this_week += f"{k} : {v[0]}\n"
+
+        return this_week

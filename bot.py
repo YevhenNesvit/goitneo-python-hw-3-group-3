@@ -20,6 +20,8 @@ def input_error(func):
                 return "Give me name and birthday please."
             elif func.__name__ == 'show_birthday' and not args[1][args[0][0]].birthday :
                 return "Contact has no birthday yet. To add birthday enter 'add-birthday name birthday'!"
+            elif func.__name__ == 'change_contact' and len(args[0]) != 3 :
+                return "Give me name, old phone and new phone please."
             else:
                 return func(*args, **kwargs)
         except ValueError:
@@ -27,7 +29,7 @@ def input_error(func):
         except KeyError:
             return "Contact does not exist. Please try again!"
         except IndexError:
-            return "Invalid command format! Command must be followed by name and phone"
+            return "Invalid command format! Command must be followed by the parameters"
     return wrapper
 
 @input_error
@@ -82,6 +84,9 @@ def show_birthday(args, book) :
     contact = book.find(name)
     if contact and contact.birthday:
         return contact.birthday
+    
+def birthdays(book) :
+    return book.get_birthdays_per_week()
 
 def main():
     book = AddressBook()
@@ -107,6 +112,8 @@ def main():
             print(add_birthday(args, book))
         elif command == "show-birthday":
             print(show_birthday(args, book))
+        elif command == "birthdays":
+            print(birthdays(book))
         else:
             print("Invalid command.")
 
