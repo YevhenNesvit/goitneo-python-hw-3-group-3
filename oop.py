@@ -1,5 +1,4 @@
 from collections import UserDict
-import re
 from datetime import datetime, date
 from collections import defaultdict
 import pickle
