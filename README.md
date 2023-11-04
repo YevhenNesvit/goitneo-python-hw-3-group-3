@@ -74,4 +74,4 @@ To load your address book from a file (during program startup):
    ```
 
 ## License
-This project is licensed under the MIT License. See the [LICENSE](#https://opensource.org/license/mit/) for details.
+This project is licensed under the MIT License. See the [LICENSE](https://opensource.org/license/mit/) for details.
